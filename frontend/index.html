@@ -1,0 +1,191 @@
+<!-- # frontend/index.html -->
+<!--  /*
+=============================================================================
+Project : voice_ai_assistant_rust — real-time multimodal Voice AI in Rust
+Module  : <module_name>.rs
+Version : 0.5.0
+Author  : Kukuh Tripamungkas Wicaksono (Kukuh TW)
+Email   : kukuhtw@gmail.com
+WhatsApp: https://wa.me/628129893706
+LinkedIn: https://id.linkedin.com/in/kukuhtw
+License : MIT (see LICENSE)
+
+Summary : Menangkap audio mikrofon, melakukan STT streaming, memproses intent
+          via LLM/NLU, mensintesis suara (TTS), serta menggerakkan avatar 3D
+          (viseme/lip-sync) dengan latensi ujung-ke-ujung < 200 ms.
+
+
+(c) 2025 Kukuh TW. All rights reserved where applicable.
+=============================================================================
+*/
+ -->
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Live Voice → STT → Action → Stream → TTS</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --ink: #111827;
+        --muted: #6b7280;
+        --panel: #f9fafb;
+        --accent: #2563eb;
+        --radius: 10px;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+        margin: 0;
+      }
+      main {
+        max-width: 960px;
+        margin: 24px auto;
+        padding: 0 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0 0 12px;
+      }
+      p.lead { color: var(--muted); margin: 0 0 20px; }
+      .row { margin: 12px 0; }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      @media (min-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid #e5e7eb;
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+      .card h2 {
+        font-size: 14px;
+        margin: 0 0 8px;
+        color: #374151;
+        letter-spacing: .2px;
+        text-transform: uppercase;
+      }
+      pre {
+        background: #fff;
+        border: 1px dashed #e5e7eb;
+        padding: 12px;
+        border-radius: 8px;
+        min-height: 84px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 0;
+      }
+      .controls button {
+        appearance: none;
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .controls button#stopBtn {
+        background: #ef4444;
+      }
+      .controls button + button { margin-left: 8px; }
+      .muted { color: var(--muted); font-size: 13px; }
+      #debug {
+        min-height: 120px;
+        font-size: 12px;
+        color: #374151;
+        background: #fff;
+      }
+      .footer {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Voice Assistant</h1>
+      <p class="lead">Bicara → di-transkrip → backend bisa melakukan aksi (contoh: cari berita AI) → stream progress & jawaban → diputar kembali sebagai audio.</p>
+
+      <div class="row controls">
+        <button id="startBtn">🎙️ Mulai Bicara</button>
+        <button id="stopBtn" style="display:none">⏹️ Stop</button>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Transcript</h2>
+          <pre id="transcript"></pre>
+          <p class="muted">Hasil STT dari audio mikrofon.</p>
+        </section>
+
+        <section class="card">
+          <h2>Progress</h2>
+          <pre id="progress"></pre>
+          <p class="muted">Log langkah-langkah (misal “mengambil berita…”, “menyusun ringkasan…”).</p>
+        </section>
+
+        <section class="card">
+          <h2>Answer (stream)</h2>
+          <pre id="answer"></pre>
+          <p class="muted">Jawaban ditampilkan secara bertahap (stream).</p>
+        </section>
+
+        <section class="card">
+          <h2>Audio Jawaban</h2>
+          <audio id="answerAudio" controls></audio>
+          <p class="muted">TTS dari jawaban akhir.</p>
+        </section>
+
+        <section class="card">
+  <h2>3D Avatar (sinkron mulut)</h2>
+  <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+    <label class="muted">Model:</label>
+    <select id="avatarModel">
+      <option value="female">Female</option>
+      <option value="male">Male</option>
+    </select>
+    <label class="muted" style="margin-left:8px;">Voice:</label>
+    <select id="voiceSelect">
+      <option value="alloy">alloy</option>
+      <option value="verse">verse</option>
+      <option value="aria">aria</option>
+    </select>
+  </div>
+  <canvas id="avatarCanvas" style="width:100%;aspect-ratio:16/9;border-radius:8px;background:#000;"></canvas>
+  <p class="muted">Mulut bergerak berdasarkan amplitudo audio TTS (tanpa viseme).</p>
+</section>
+
+      </div>
+
+
+
+      <section class="row card">
+        <h2>Debug</h2>
+        <pre id="debug"></pre>
+      </section>
+
+      <div class="footer">
+        <span class="muted">Tip: ucapkan “carikan berita terbaru tentang AI” untuk memicu intent berita.</span>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+

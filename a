@@ -1,0 +1,73 @@
+
+make down || true
+docker builder prune -f
+make rebuild
+# atau manual:
+# docker compose build --no-cache
+# docker compose up -d
+
+docker compose down -v
+docker builder prune -af
+docker compose build --no-cache
+docker compose up -d
+
+docker compose logs -f backend
+# kalau sudah "listening port=8080", test:
+curl -i http://localhost:5173/health
+
+kukuhtw@KukuhTW-Lenovo:~/rust/audio_qa_avatar$ tree
+.
+├── Makefile
+├── a
+├── backend
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   ├── Dockerfile
+│   ├── debug
+│   ├── debug.rs
+│   ├── rust-toolchain.toml
+│   └── src
+│       └── main.rs
+├── docker-compose.yml
+└── frontend
+    ├── Dockerfile
+    ├── index.html
+    ├── nginx.conf
+    ├── package.json
+    ├── public
+    │   └── assets
+    │       ├── Emi.glb:Zone.Identifier
+    │       └── avatar_female.glb
+    ├── src
+    │   ├── api.ts
+    │   ├── avatar.ts
+    │   ├── main.ts
+    │   └── ui.ts
+    ├── tsconfig.json
+    └── vite.config.ts
+
+7 directories, 22 files
+kukuhtw@KukuhTW-Lenovo:~/rust/audio_qa_avatar$
+
+
+
+"Emi - miniroyale.io - (Rigged)" (https://skfb.ly/pqoOp) by zct_33 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+
+"Human Torch MCU" (https://skfb.ly/pzzBH) by WW3 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+
+"Invisible Woman MCU" (https://skfb.ly/pzzxJ) by WW3 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+
+"Lisa - Woman Head with BlendShapes" (https://skfb.ly/o69ns) by skullvez is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+"Stellar Blade - Lily (Stargazer Coat)" (https://skfb.ly/pzKDI) by VITU6018 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+"Facial animation of a sexy girl" (https://skfb.ly/prKsE) by patromes is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+
+
+docker compose build
+docker compose up -d
+docker compose logs -f backend

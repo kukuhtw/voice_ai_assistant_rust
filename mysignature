@@ -1,0 +1,19 @@
+/*
+=============================================================================
+Project : voice_ai_assistant_rust — real-time multimodal Voice AI in Rust
+Module  : <module_name>.rs
+Version : 0.5.0
+Author  : Kukuh Tripamungkas Wicaksono (Kukuh TW)
+Email   : kukuhtw@gmail.com
+WhatsApp: https://wa.me/628129893706
+LinkedIn: https://id.linkedin.com/in/kukuhtw
+License : MIT (see LICENSE)
+
+Summary : Menangkap audio mikrofon, melakukan STT streaming, memproses intent
+          via LLM/NLU, mensintesis suara (TTS), serta menggerakkan avatar 3D
+          (viseme/lip-sync) dengan latensi ujung-ke-ujung < 200 ms.
+
+
+(c) 2025 Kukuh TW. All rights reserved where applicable.
+=============================================================================
+*/

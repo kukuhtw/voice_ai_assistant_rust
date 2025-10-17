@@ -1,0 +1,27 @@
+# docker-compose.yml
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - RUST_LOG=info,tower_http=info,reqwest=info
+      - RUST_BACKTRACE=1
+      - PORT=8080
+    ports:
+      - "18080:8080"   # pakai port host lain biar jelas
+    # HAPUS healthcheck di sini
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_BACKEND_URL=
+    depends_on:
+      backend:
+        condition: service_started   # bukan service_healthy
+    restart: unless-stopped
+    ports:
+      - "5173:80"
