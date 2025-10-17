@@ -6,6 +6,12 @@
 Backend **Rust (Axum)**, Frontend **TypeScript (Vite + Three.js)**.
 
 ---
+🎥 Demo Video
+
+Check out the live demo on YouTube: “AI Voice Assistant + Avatar Interaktif!” — Watch here
+ 
+youtube.com
+
 
 ## 🧠 Overview
 
